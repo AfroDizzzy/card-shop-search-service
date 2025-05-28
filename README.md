@@ -15,3 +15,7 @@ npm i @sap/hana-client
 npm i hdb-pool
 # for MongoDB (experimental)
 npm install mongodb --save
+
+
+#user.json vscode config
+"js/ts.implicitProjectConfig.checkJs": true,
