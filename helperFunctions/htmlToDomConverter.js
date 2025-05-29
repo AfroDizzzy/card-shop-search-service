@@ -30,7 +30,7 @@ function converter(html) {
         // Extract price
         const priceElement = element.querySelector('.price .price-new');
         const priceText = priceElement ? priceElement.textContent?.trim() : '';
-        const price = parseInt((priceText?.replace('$', '') || ''), 10);
+        const price = parseFloat((priceText?.replace('$', '') || ''));
 
         // Extract stock info
         const stockElement = element.querySelector('.stock');
@@ -39,7 +39,7 @@ function converter(html) {
         const stockInfo = {
             inStock: true,
             // @ts-ignore
-            quantity: parseInt(stockText.match(/(\d+)\s+in\s+stock/i)[1]) || 0,
+            quantity: parseInt(stockText[0]) || 0,
             stockText: stockText || '',
         };
 
@@ -63,6 +63,7 @@ function converter(html) {
     );
     });
 
+    //adds 100ms to response time
     return cards.sort((a, b) => a.price - b.price);
 }
 
