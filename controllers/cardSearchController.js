@@ -1,6 +1,5 @@
 const converter = require("../helperFunctions/htmlToDomConverter");
 
-/* GET home page. */
 exports.cardSearch = async (req, res) => {
   try {
     const response = await fetch("https://hobbymaster.co.nz/search?search=craterhoof+", {
@@ -28,12 +27,7 @@ exports.cardSearch = async (req, res) => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    res.json({cards: await response.text()})
-    //res.render('index', { hobbyMaster: `${ await response.text()}` });
-    // res.json({
-    //   success: true,
-    //   list: converter(response.text())
-    // });
+    res.json({cards: converter(await response.text())})
   }
   catch (e) {
     console.error('Error searching:', e);
