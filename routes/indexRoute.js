@@ -3,7 +3,6 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/index', async function (req, res, next) {
-
   
   //you cant render and .json a response. You have to set it in the header
   res.set({

@@ -23,5 +23,5 @@ function converter(dom) {
     }
     return obj;
 }
-const json = JSON.stringify(converter(document.getElementById("example")), null, 4);
-console.log(json);
+
+module.exports = converter;

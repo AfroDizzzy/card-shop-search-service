@@ -7,8 +7,10 @@ const swaggerDocument = require('./swaggerConfig.js');
 const swaggerJsdoc = require("swagger-jsdoc");
 var http = require('http');
 
-var indexRouter = require('./routes/index');
-//var usersRouter = require('./routes/userRouter');
+var indexRoute = require('./routes/indexRoute');
+var healthRouter = require('./routes/healthCheckRoute')
+var cardSearchRouter = require('./routes/cardSearchRoute')
+
 
 var express = require('express');
 var cors = require('cors');
@@ -20,11 +22,11 @@ var debug = require('debug')('shop-searching-service:server');
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJsdoc(swaggerDocument.swaggerOptions)));
 
 //start server
-var port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
+var PORT = normalizePort(process.env.PORT || '3000');
+app.set('port', PORT);
 var server = http.createServer(app);
 
-server.listen(port);
+server.listen(PORT);
 server.on('error', onError);
 server.on('listening', onListening);
 
@@ -46,7 +48,9 @@ app.use(logger('dev'));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
+app.use('/', indexRoute);
+app.use('/', healthRouter);
+app.use('/', cardSearchRouter);
 //app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
@@ -92,9 +96,9 @@ function onError(error) {
     throw error;
   }
 
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+  var bind = typeof PORT === 'string'
+    ? 'Pipe ' + PORT
+    : 'Port ' + PORT;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
@@ -121,6 +125,7 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
+  console.log(`Server is running on port ${addr.port}`);
 }
 
 module.exports = app;
