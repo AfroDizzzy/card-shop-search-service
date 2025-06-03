@@ -2,7 +2,7 @@ const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 require("dotenv").config();  // Load environment variables
 
-function converter(html) {
+exports.HobbyMasterConverter = (html) => {
     const dom = new JSDOM(html);
     const document = dom.window.document;
     const cards = [];
@@ -23,9 +23,9 @@ function converter(html) {
         const imageAlt = imageElement?.getAttribute('alt') || '';
 
         // Extract hobbymaster internal link
-        const cardLinkElement = element.querySelector('.image a');
+        const cardLinkElement = element.querySelector('.productLink');
         const cardLink = cardLinkElement?.getAttribute('href') || '';
-        const fullCardLink = cardLink ? `${process.env.HOBBYMASTERBASEURL}${cardLink}` : '';
+        const fullCardLink = cardLink ? `${process.env.SH}${cardLink}` : '';
 
         // Extract price
         const priceElement = element.querySelector('.price .price-new');
@@ -45,27 +45,25 @@ function converter(html) {
 
         cards.push(
             {
-            id: dataId,
-            //name: dataName,
-            title: dataName,
-            price: price,
-            priceFormatted: priceText,
-            image: {
-                url: imageUrl,
-                alt: imageAlt
-            },
-            links: {
-                card: fullCardLink,
-            },
-            stock: stockInfo,
-            //html: element.innerHTML // Include original HTML if needed
-        }
-    );
+                id: dataId,
+                //name: dataName,
+                title: dataName,
+                price: price,
+                priceFormatted: priceText,
+                image: {
+                    url: imageUrl,
+                    alt: imageAlt
+                },
+                links: {
+                    card: fullCardLink,
+                },
+                stock: stockInfo,
+                //html: element.innerHTML // Include original HTML if needed
+            }
+        );
     });
 
     //adds 100ms to response time
     return cards.sort((a, b) => a.price - b.price);
 }
 
-
-module.exports = converter;
