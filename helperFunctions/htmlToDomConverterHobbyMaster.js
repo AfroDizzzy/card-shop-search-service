@@ -40,7 +40,6 @@ exports.HobbyMasterConverter = (html) => {
             inStock: true,
             // @ts-ignore
             quantity: parseInt(stockText[0]) || 0,
-            stockText: stockText || '',
         };
 
         cards.push(
