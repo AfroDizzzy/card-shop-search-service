@@ -19,3 +19,18 @@ npm install mongodb --save
 
 #user.json vscode config
 "js/ts.implicitProjectConfig.checkJs": true,
+
+
+Required 
+
+Node JS 21
+NPM
+Docker Desktop
+
+
+Follows https://docs.docker.com/guides/nodejs/containerize/ to setup docker
+
+run the application detached from the terminal:
+    docker compose up --build -d
+to stop the application:
+     docker compose down

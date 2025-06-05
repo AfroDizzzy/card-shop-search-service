@@ -1,30 +1,36 @@
-var createError = require('http-errors');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swaggerConfig.js');
 const swaggerJsdoc = require("swagger-jsdoc");
-var http = require('http');
+const http = require('http');
 
-var indexRoute = require('./routes/indexRoute');
-var healthRouter = require('./routes/healthCheckRoute')
-var cardSearchRouter = require('./routes/cardSearchRoute')
+const indexRoute = require('./routes/indexRoute');
+const healthRouter = require('./routes/healthCheckRoute')
+const cardSearchRouter = require('./routes/cardSearchRoute')
 
+//database layer imports
+const db = require('./persistence');
+const getItems = require('./routes/db/getItems');
+const addItem = require('./routes/db/addItem');
+const updateItem = require('./routes/db/updateItem');
+const deleteItem = require('./routes/db/deleteItem');
 
-var express = require('express');
-var cors = require('cors');
+const express = require('express');
+const cors = require('cors');
 
-var app = express();
-var debug = require('debug')('shop-searching-service:server');
+const app = express();
+const debug = require('debug')('shop-searching-service:server');
 
 //swagger config
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJsdoc(swaggerDocument.swaggerOptions)));
 
 //start server
-var PORT = normalizePort(process.env.PORT || '3000');
+const PORT = normalizePort(process.env.PORT || '4321');
 app.set('port', PORT);
-var server = http.createServer(app);
+const server = http.createServer(app);
 
 server.listen(PORT);
 server.on('error', onError);
@@ -48,15 +54,38 @@ app.use(logger('dev'));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//basic routes
 app.use('/', indexRoute);
 app.use('/', healthRouter);
+
+//cardSearching
 app.use('/', cardSearchRouter);
-//app.use('/users', usersRouter);
 
+//database routes
+app.get('/items', getItems);
+app.post('/items', addItem);
+app.put('/items/:id', updateItem);
+app.delete('/items/:id', deleteItem);
 
+db.init().then(() => {
+  app.listen(3000, () => console.log('Listening on port 3000'));
+}).catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
+
+const gracefulShutdown = () => {
+  db.teardown()
+    .catch(() => { })
+    .then(() => process.exit());
+};
+
+process.on('SIGINT', gracefulShutdown);
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGUSR2', gracefulShutdown); // Sent by nodemon
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -69,7 +98,7 @@ app.use(function(err, req, res, next) {
 
 
 function normalizePort(val) {
-  var port = parseInt(val, 10);
+  const port = parseInt(val, 10);
 
   if (isNaN(port)) {
     // named pipe
@@ -93,7 +122,7 @@ function onError(error) {
     throw error;
   }
 
-  var bind = typeof PORT === 'string'
+  const bind = typeof PORT === 'string'
     ? 'Pipe ' + PORT
     : 'Port ' + PORT;
 
@@ -117,8 +146,8 @@ function onError(error) {
  */
 
 function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string'
+  const addr = server.address();
+  const bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
