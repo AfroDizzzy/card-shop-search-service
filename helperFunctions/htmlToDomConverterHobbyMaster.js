@@ -1,4 +1,5 @@
 const jsdom = require("jsdom");
+const { parseCardName } = require("./cardNameParser");
 const { JSDOM } = jsdom;
 require("dotenv").config();  // Load environment variables
 
@@ -13,9 +14,22 @@ exports.HobbyMasterConverter = (html) => {
         if (element.querySelector('.stock')?.innerHTML.includes('Out')) {
             return;
         }
-        // Extract basic info
+        // Extract id and name
         const dataId = element.getAttribute('data-id');
-        const dataName = element.getAttribute('data-name');
+        const dataName = element.getAttribute('data-name') || '';
+        // const baseName = dataName?.replace(/\([^)]+\)/g, '') // Remove round brackets and contents
+        //     .trim()
+        //     .replace(/\s+/g, ' '); // Normalize whitespace
+
+        const parsedCardName = parseCardName(dataName);
+        const setName = parsedCardName?.setName || '';
+        const cardName = parsedCardName.baseName;
+        const treatment = parsedCardName.treatment;
+
+        // Extract Condition
+        const condition =
+            dataName.includes('LP') ? 'Lightly Played' :
+                dataName.includes('MP') ? 'Moderately Played' : 'Near Mint';
 
         // Extract image info
         const imageElement = element.querySelector('.image img');
@@ -23,9 +37,9 @@ exports.HobbyMasterConverter = (html) => {
         const imageAlt = imageElement?.getAttribute('alt') || '';
 
         // Extract hobbymaster internal link
-        const cardLinkElement = element.querySelector('.productLink');
-        const cardLink = cardLinkElement?.getAttribute('href') || '';
-        const fullCardLink = cardLink ? `${process.env.SH}${cardLink}` : '';
+        const cardLinkElement = element.querySelector('.overview');
+        const cardLink = cardLinkElement?.querySelector('a') || '';
+        const fullCardLink = cardLink ? `${process.env.HOBBYMASTERBASEURL}${cardLink}` : '';
 
         // Extract price
         const priceElement = element.querySelector('.price .price-new');
@@ -44,9 +58,13 @@ exports.HobbyMasterConverter = (html) => {
 
         cards.push(
             {
+                shop: 'Hobby Master',
                 id: dataId,
                 //name: dataName,
-                title: dataName,
+                title: cardName,
+                set: setName ? setName : '',
+                treatment: treatment,
+                condition: condition,
                 price: price,
                 priceFormatted: priceText,
                 image: {
@@ -63,6 +81,6 @@ exports.HobbyMasterConverter = (html) => {
     });
 
     //adds 100ms to response time
-    return cards.sort((a, b) => a.price - b.price);
+    return cards
 }
 
