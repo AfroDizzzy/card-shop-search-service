@@ -20,12 +20,15 @@
     "jsdom": "^26.1.0",
     "morgan": "~1.9.1",
     "pg": "^8.16.0",
+    "postgres": "^3.4.7",
     "reflect-metadata": "^0.2.2",
+    "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "typeorm": "^0.3.24",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "wait-port": "^1.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.27.0",

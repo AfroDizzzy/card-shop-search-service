@@ -13,39 +13,71 @@ services:
       context: .
     environment:
       NODE_ENV: production
+      POSTGRES_HOST: db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/db-password
+      POSTGRES_DB: example
+      HOBBYMASTERBASEURL: 'https://hobbymaster.co.nz'
+      HOBBYMASTERSEARCHURL: 'https://hobbymaster.co.nz/search?search='
+      SHUFFLEBASEURL: 'https://www.shuffleandcutgames.co.nz'
+      SHUFFLESEARCHURL: 'https://www.shuffleandcutgames.co.nz/search?q='
+      SHUFFLEENDURL: '*+product_type%3A"mtg"'
     ports:
       - 3000:3000
 
-# The commented out section below is an example of how to define a PostgreSQL
-# database that your application can use. `depends_on` tells Docker Compose to
-# start the database before your application. The `db-data` volume persists the
-# database data between container restarts. The `db-password` secret is used
-# to set the database password. You must create `db/password.txt` and add
-# a password of your choosing to it before running `docker-compose up`.
-#     depends_on:
-#       db:
-#         condition: service_healthy
-#   db:
-#     image: postgres
-#     restart: always
-#     user: postgres
-#     secrets:
-#       - db-password
-#     volumes:
-#       - db-data:/var/lib/postgresql/data
-#     environment:
-#       - POSTGRES_DB=example
-#       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
-#     expose:
-#       - 5432
-#     healthcheck:
-#       test: [ "CMD", "pg_isready" ]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-# volumes:
-#   db-data:
-# secrets:
-#   db-password:
-#     file: db/password.txt
+    # The commented out section below is an example of how to define a PostgreSQL
+    # database that your application can use. `depends_on` tells Docker Compose to
+    # start the database before your application. The `db-data` volume persists the
+    # database data between container restarts. The `db-password` secret is used
+    # to set the database password. You must create `db/password.txt` and add
+    # a password of your choosing to it before running `docker compose up`.
 
+    depends_on:
+      db:
+        condition: service_healthy
+    secrets:
+      - db-password
+  db:
+    image: postgres
+    restart: always
+    user: postgres
+    secrets:
+      - db-password
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=example
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+    expose:
+      - 5432
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin_web
+    secrets:
+      - db-password
+    ports:
+      - "127.0.0.1:8080:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    environment:
+      POSTGRES_USER: postgres
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: postgres123
+    depends_on:
+      - db
+    networks:
+      - postgres_network  
+volumes:
+  db-data:
+  pgadmin_data:
+secrets:
+  db-password:
+    file: db/password.txt
+networks:
+  postgres_network:
+    driver: bridge

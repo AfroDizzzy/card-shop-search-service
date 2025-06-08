@@ -30,7 +30,14 @@ Docker Desktop
 
 Follows https://docs.docker.com/guides/nodejs/containerize/ to setup docker
 
-run the application detached from the terminal:
+# run the application detached from the terminal:
+    <!-- Builds, (re)creates, starts, and attaches to containers for a service.
+    The docker compose up command aggregates the output of each container -->
     docker compose up --build -d
-to stop the application:
-     docker compose down
+# to stop the application:
+     docker compose down OR cntrl + C in terminal
+
+# PgAdmin Access
+    To use pgAdmin to access to the postgres container, you have to run this project locally. it cannot be accessed when running externally. 
+    Local password - postgres123
+    Local Email - admin@example.com
