@@ -58,7 +58,7 @@ jobs:
         with:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID_ }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY_ }}
-          aws-region: ${{ env.REGION }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
