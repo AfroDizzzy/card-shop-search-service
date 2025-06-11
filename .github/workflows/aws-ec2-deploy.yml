@@ -37,7 +37,7 @@ env:
   ECS_SERVICE: sample-fargate-service-0x5jcms2 # set this to your Amazon ECS service name
   ECS_CLUSTER: card-service-cluster # set this to your Amazon ECS cluster name
   ECS_TASK_DEFINITION:
-    MY_ECS_TASK_DEFINITION # set this to the path to your Amazon ECS task definition
+    .github\workflows\aws-ec2-deploy.yml # set this to the path to your Amazon ECS task definition
     # file, e.g. .aws/task-definition.json
   CONTAINER_NAME:
     .github\workflows\aws-ec2-deploy.yml # set this to the name of the container in the
@@ -55,10 +55,16 @@ jobs:
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
+        env:
+          AWS_DEFAULT_REGION:
+          AWS_REGION:
+          AWS_ACCESS_KEY_ID:
+          AWS_SECRET_ACCESS_KEY:
+          AWS_SESSION_TOKEN:
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID_ }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY_ }}
+          aws-region: ${{ env.REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
