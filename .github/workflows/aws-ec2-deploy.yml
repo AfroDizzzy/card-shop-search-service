@@ -10,12 +10,26 @@
 name: Deploy to Amazon ECS
 # Only run one build pipeline at a time. Will cancel an ongoing pipeline if is running and run again with new commit
 concurrency: production
-
 on:
   push:
     branches: ['master']
   pull_request:
     branches: ['master']
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
+      tags:
+        description: 'Test scenario tags'
+        required: false
+        type: boolean
 
 env:
   AWS_REGION: ap-southeast-2 # set this to your preferred AWS region, e.g. us-west-1
