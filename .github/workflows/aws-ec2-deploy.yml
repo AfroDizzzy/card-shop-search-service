@@ -8,11 +8,14 @@
 # You can also reference a tag or branch, but the action may change without warning.
 
 name: Deploy to Amazon ECS
+# Only run one build pipeline at a time. Will cancel an ongoing pipeline if is running and run again with new commit
+concurrency: production
 
 on:
   push:
-    branches:
-      - main
+    branches: ['master']
+  pull_request:
+    branches: ['master']
 
 env:
   AWS_REGION: ap-southeast-2 # set this to your preferred AWS region, e.g. us-west-1
