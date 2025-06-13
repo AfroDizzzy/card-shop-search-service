@@ -11,13 +11,6 @@ const indexRoute = require('./routes/indexRoute');
 const healthRouter = require('./routes/healthCheckRoute')
 const cardSearchRouter = require('./routes/cardSearchRoute')
 
-//database layer imports
-const db = require('./persistence');
-const getItems = require('./routes/db/getItems');
-const addItem = require('./routes/db/addItem');
-const updateItem = require('./routes/db/updateItem');
-const deleteItem = require('./routes/db/deleteItem');
-
 const express = require('express');
 const cors = require('cors');
 
@@ -60,29 +53,6 @@ app.use('/', healthRouter);
 
 //cardSearching
 app.use('/', cardSearchRouter);
-
-//database routes
-app.get('/items', getItems);
-app.post('/items', addItem);
-app.put('/items/:id', updateItem);
-app.delete('/items/:id', deleteItem);
-
-db.init().then(() => {
-  app.listen(3000, () => console.log('Listening on port 3000'));
-}).catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
-
-const gracefulShutdown = () => {
-  db.teardown()
-    .catch(() => { })
-    .then(() => process.exit());
-};
-
-process.on('SIGINT', gracefulShutdown);
-process.on('SIGTERM', gracefulShutdown);
-process.on('SIGUSR2', gracefulShutdown); // Sent by nodemon
 
 // error handler
 app.use(function (err, req, res, next) {
@@ -149,7 +119,7 @@ function onListening() {
   const addr = server.address();
   const bind = typeof addr === 'string'
     ? 'pipe ' + addr
-    : 'port ' + addr.port;
+    : 'port ' + addr?.port;
   debug('Listening on ' + bind);
   console.log(`Server is running on port ${addr.port}`);
 }
