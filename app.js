@@ -21,7 +21,7 @@ const debug = require('debug')('shop-searching-service:server');
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJsdoc(swaggerDocument.swaggerOptions)));
 
 //start server
-const PORT = normalizePort(process.env.PORT || '4321');
+const PORT = normalizePort(process.env.PORT || '8080');
 app.set('port', PORT);
 const server = http.createServer(app);
 
